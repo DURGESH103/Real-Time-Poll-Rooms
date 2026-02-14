@@ -12,16 +12,14 @@ const PollCard = ({ poll }) => {
   return (
     <div
       onClick={() => navigate(`/poll/${poll.pollId}`)}
-      className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-6 cursor-pointer group"
+      className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-300/50 hover:-translate-y-1 transition-all duration-300 p-6 cursor-pointer group"
     >
-      {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex-1 group-hover:text-blue-600 transition-colors">
           {poll.question}
         </h3>
       </div>
 
-      {/* Stats */}
       <div className="flex items-center gap-4 mb-4">
         <LiveBadge isActive={poll.isActive} />
         <div className="flex items-center gap-1 text-sm text-gray-600">
@@ -30,7 +28,6 @@ const PollCard = ({ poll }) => {
         </div>
       </div>
 
-      {/* Progress Bars - Top 2 options */}
       <div className="space-y-3 mb-4">
         {sortedOptions.slice(0, 2).map((option, idx) => {
           const percentage = poll.totalVotes > 0 
@@ -48,11 +45,10 @@ const PollCard = ({ poll }) => {
         })}
       </div>
 
-      {/* Leading Option */}
       {poll.totalVotes > 0 && (
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200/50">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-green-600" />
+            <TrendingUp className="w-4 h-4 text-emerald-600" />
             <span className="text-sm text-gray-600">Leading</span>
           </div>
           <span className="text-sm font-semibold text-gray-900 truncate max-w-[150px]">

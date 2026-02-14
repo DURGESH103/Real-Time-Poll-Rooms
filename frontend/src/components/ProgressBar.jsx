@@ -1,7 +1,7 @@
 const ProgressBar = ({ option, percentage, isLeading }) => {
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between mb-1.5">
         <span className="text-sm font-medium text-gray-700 truncate flex-1">
           {option.text}
         </span>
@@ -9,12 +9,12 @@ const ProgressBar = ({ option, percentage, isLeading }) => {
           {percentage}%
         </span>
       </div>
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${
+          className={`h-full rounded-full transition-all duration-700 ease-out ${
             isLeading 
-              ? 'bg-gradient-to-r from-green-500 to-green-600' 
-              : 'bg-blue-500'
+              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+              : 'bg-gradient-to-r from-blue-500 to-indigo-600'
           }`}
           style={{ width: `${percentage}%` }}
         />
