@@ -8,21 +8,22 @@ const PollCard = ({ poll }) => {
   
   const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes);
   const leader = sortedOptions[0];
+  const isActive = !poll.isClosed && (!poll.pollExpiryTime || new Date(poll.pollExpiryTime) > new Date());
 
   return (
     <div
       onClick={() => navigate(`/poll/${poll.pollId}`)}
-      className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-300/50 hover:-translate-y-1 transition-all duration-300 p-6 cursor-pointer group"
+      className="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-lg hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300 p-6 cursor-pointer group"
     >
       <div className="flex items-start justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex-1 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-lg font-semibold text-slate-900 line-clamp-2 flex-1 group-hover:text-indigo-600 transition-colors">
           {poll.question}
         </h3>
       </div>
 
-      <div className="flex items-center gap-4 mb-4">
-        <LiveBadge isActive={poll.isActive} />
-        <div className="flex items-center gap-1 text-sm text-gray-600">
+      <div className="flex items-center gap-4 mb-5">
+        <LiveBadge isActive={isActive} />
+        <div className="flex items-center gap-1.5 text-sm font-medium text-slate-600">
           <Users className="w-4 h-4" />
           <span>{poll.totalVotes} votes</span>
         </div>
@@ -46,12 +47,12 @@ const PollCard = ({ poll }) => {
       </div>
 
       {poll.totalVotes > 0 && (
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200/50">
+        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-600" />
-            <span className="text-sm text-gray-600">Leading</span>
+            <span className="text-sm font-medium text-slate-500">Leading</span>
           </div>
-          <span className="text-sm font-semibold text-gray-900 truncate max-w-[150px]">
+          <span className="text-sm font-semibold text-slate-900 truncate max-w-[150px]">
             {leader.text}
           </span>
         </div>
