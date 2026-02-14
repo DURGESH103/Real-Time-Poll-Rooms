@@ -1,4 +1,11 @@
 import Joi from 'joi';
+import DOMPurify from 'isomorphic-dompurify';
+
+// Sanitize string input
+const sanitize = (value) => {
+  if (typeof value !== 'string') return value;
+  return DOMPurify.sanitize(value, { ALLOWED_TAGS: [] });
+};
 
 // Poll creation validation schema
 export const createPollSchema = Joi.object({
@@ -6,6 +13,7 @@ export const createPollSchema = Joi.object({
     .min(10)
     .max(200)
     .trim()
+    .custom((value, helpers) => sanitize(value))
     .required()
     .messages({
       'string.min': 'Question must be at least 10 characters',
@@ -19,6 +27,7 @@ export const createPollSchema = Joi.object({
         .min(1)
         .max(100)
         .trim()
+        .custom((value, helpers) => sanitize(value))
         .required()
     )
     .min(2)
@@ -34,11 +43,10 @@ export const createPollSchema = Joi.object({
 // Vote submission validation schema
 export const voteSchema = Joi.object({
   pollId: Joi.string()
-    .alphanum()
-    .length(9)
+    .pattern(/^[a-zA-Z0-9_-]{7,12}$/)
     .required()
     .messages({
-      'string.length': 'Invalid poll ID format',
+      'string.pattern.base': 'Invalid poll ID format',
       'any.required': 'Poll ID is required'
     }),
   

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Copy, Check, Share2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const ShareLink = ({ url }) => {
   const [copied, setCopied] = useState(false);
@@ -8,38 +9,40 @@ const ShareLink = ({ url }) => {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      toast.success('Link copied to clipboard!', { duration: 2000 });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+      toast.error('Failed to copy link');
     }
   };
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-      <div className="flex items-center gap-2 mb-2">
-        <Share2 className="w-4 h-4 text-blue-600" />
-        <span className="text-sm font-medium text-blue-900">Share this poll</span>
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <div className="flex items-center gap-2 mb-3">
+        <Share2 className="w-5 h-5 text-blue-600" />
+        <span className="text-sm font-semibold text-gray-900">Share this poll</span>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-3">
         <input
           type="text"
           value={url}
           readOnly
-          className="flex-1 px-3 py-2 bg-white border border-blue-300 rounded text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           onClick={handleCopy}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 min-w-[120px]"
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4" />
+              <Check className="w-5 h-5" />
               Copied!
             </>
           ) : (
             <>
-              <Copy className="w-4 h-4" />
-              Copy
+              <Copy className="w-5 h-5" />
+              Copy Link
             </>
           )}
         </button>

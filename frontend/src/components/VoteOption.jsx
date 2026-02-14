@@ -8,18 +8,18 @@ const VoteOption = ({ option, totalVotes, selected, onSelect, disabled, showResu
       onClick={() => !disabled && onSelect(option.id)}
       disabled={disabled}
       className={`
-        relative w-full p-4 rounded-lg border-2 transition-all text-left overflow-hidden
+        relative w-full p-4 rounded-xl border-2 transition-all text-left overflow-hidden min-h-[56px]
         ${selected 
-          ? 'border-blue-600 bg-blue-50' 
-          : 'border-gray-300 hover:border-blue-400 bg-white'
+          ? 'border-blue-600 bg-blue-50 shadow-md' 
+          : 'border-gray-200 hover:border-blue-400 hover:shadow-sm bg-white'
         }
-        ${disabled ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'}
+        ${disabled ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:scale-[1.02]'}
       `}
     >
       {/* Progress Bar Background */}
       {showResults && (
         <div 
-          className="absolute inset-0 bg-blue-100 transition-all duration-500 ease-out"
+          className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 transition-all duration-1000 ease-out"
           style={{ width: `${percentage}%` }}
         />
       )}
@@ -32,7 +32,7 @@ const VoteOption = ({ option, totalVotes, selected, onSelect, disabled, showResu
               <Check className="w-4 h-4 text-white" />
             </div>
           )}
-          <span className="font-medium text-gray-900">{option.text}</span>
+          <span className="font-medium text-gray-900 text-base sm:text-lg">{option.text}</span>
         </div>
         
         {showResults && (

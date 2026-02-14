@@ -8,23 +8,31 @@ const ResultsChart = ({ poll, hasVoted, selectedOption }) => {
   return (
     <div className="space-y-6">
       {/* Stats Header */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-blue-600" />
-          <div>
-            <p className="text-sm text-gray-600">Total Votes</p>
-            <p className="text-2xl font-bold text-gray-900">{poll.totalVotes}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 font-medium">Total Votes</p>
+              <p className="text-2xl font-bold text-gray-900">{poll.totalVotes}</p>
+            </div>
           </div>
         </div>
         
         {poll.totalVotes > 0 && (
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Leading</p>
-              <p className="text-lg font-semibold text-gray-900 truncate max-w-[150px]">
-                {winner.text}
-              </p>
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-600 font-medium">Leading</p>
+                <p className="text-lg font-bold text-gray-900 truncate">
+                  {winner.text}
+                </p>
+              </div>
             </div>
           </div>
         )}
