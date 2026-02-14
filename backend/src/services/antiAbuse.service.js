@@ -35,27 +35,12 @@ class AntiAbuseService {
 
   /**
    * Check if IP has exceeded vote limit for this poll
-   * Mechanism 2: IP-Based Rate Limiting
+   * Mechanism 2: IP-Based Rate Limiting (removed - now using middleware)
    */
   async checkIpVoteLimit(pollId, ip) {
-    try {
-      const voteCount = await Vote.countDocuments({ pollId, ip });
-      
-      // Allow only 1 vote per IP per poll
-      if (voteCount >= 1) {
-        logger.warn(`IP vote limit exceeded - Poll: ${pollId}, IP: ${ip}`);
-        return {
-          allowed: false,
-          reason: 'IP_LIMIT_EXCEEDED',
-          message: 'Maximum votes reached from this network'
-        };
-      }
-
-      return { allowed: true };
-    } catch (error) {
-      logger.error('Error checking IP limit:', error);
-      throw error;
-    }
+    // This check is now handled by ipRateLimitPerPoll middleware
+    // Keeping method for backward compatibility
+    return { allowed: true };
   }
 
   /**
@@ -99,13 +84,7 @@ class AntiAbuseService {
       return fingerprintCheck;
     }
 
-    // Check 2: IP per-poll limit
-    const ipCheck = await this.checkIpVoteLimit(pollId, ip);
-    if (!ipCheck.allowed) {
-      return ipCheck;
-    }
-
-    // Check 3: Global IP rate limit
+    // Check 2: Global IP rate limit
     const globalCheck = await this.checkGlobalIpRateLimit(ip);
     if (!globalCheck.allowed) {
       return globalCheck;

@@ -14,7 +14,8 @@ export const submitVote = asyncHandler(async (req, res) => {
   const { pollId, optionId, fingerprint } = req.validatedData;
   
   // Get client IP
-  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const forwarded = req.headers['x-forwarded-for'];
+  const ip = forwarded ? forwarded.split(',')[0].trim() : (req.ip || req.connection.remoteAddress || 'unknown');
   const userAgent = req.get('user-agent') || '';
 
   // Step 1: Verify poll exists and option is valid
