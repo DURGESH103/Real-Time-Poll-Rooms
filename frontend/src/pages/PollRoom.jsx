@@ -23,6 +23,7 @@ const PollRoom = () => {
   const [hasVoted, setHasVoted] = useState(false);
   const [voting, setVoting] = useState(false);
   const [fingerprint, setFingerprint] = useState(null);
+  const [timeLeft, setTimeLeft] = useState('');
 
   // Real-time updates handler
   const handleVoteUpdate = useCallback((data) => {
@@ -31,7 +32,35 @@ const PollRoom = () => {
   }, [updatePollResults]);
 
   // Socket connection
-  const { connected, reconnecting } = useSocket(pollId, handleVoteUpdate);
+  const { connected, reconnecting, socket } = useSocket(pollId, handleVoteUpdate);
+
+  // Countdown timer
+  useEffect(() => {
+    if (!poll?.pollExpiryTime) return;
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const expiry = new Date(poll.pollExpiryTime).getTime();
+      const diff = expiry - now;
+
+      if (diff <= 0) {
+        setTimeLeft('Expired');
+        clearInterval(interval);
+        if (socket) {
+          socket.emit('poll_closed', pollId);
+        }
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [poll, pollId, socket]);
 
   // Get device fingerprint on mount
   useEffect(() => {
@@ -162,6 +191,21 @@ const PollRoom = () => {
                 {poll.totalVotes} {poll.totalVotes === 1 ? 'vote' : 'votes'} • 
                 {hasVoted ? ' ✓ You voted' : ' Select an option to vote'}
               </p>
+              {poll.pollExpiryTime && (
+                <div className="flex items-center gap-2 text-sm mt-2">
+                  {timeLeft === 'Expired' ? (
+                    <>
+                      <span className="text-red-500">●</span>
+                      <span className="text-red-600 font-medium">Expired</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="animate-pulse text-green-500">●</span>
+                      <span className="text-gray-500">Ends in {timeLeft}</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Connection Status */}
