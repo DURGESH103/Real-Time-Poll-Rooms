@@ -61,6 +61,8 @@ export const ipRateLimitPerPoll = (req, res, next) => {
     const oldestAttempt = Math.min(...attempts);
     const timeUntilReset = Math.ceil((RATE_LIMIT_WINDOW - (now - oldestAttempt)) / 1000 / 60);
     
+    console.log(`[SECURITY] Vote blocked - IP rate limit - pollId: ${pollId}, ip: ${ip}, attempts: ${attempts.length}`);
+    
     return res.status(429).json({
       success: false,
       error: {

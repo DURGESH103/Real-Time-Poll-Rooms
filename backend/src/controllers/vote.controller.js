@@ -21,6 +21,29 @@ export const submitVote = asyncHandler(async (req, res) => {
   // Step 1: Verify poll exists and option is valid
   const poll = await pollService.getPollById(pollId);
   
+  // Check if poll is closed or expired
+  if (poll.isClosed) {
+    console.log(`[SECURITY] Vote blocked - Poll closed - pollId: ${pollId}, ip: ${ip}`);
+    return res.status(403).json({
+      success: false,
+      error: {
+        code: 'POLL_CLOSED',
+        message: 'This poll is closed and no longer accepting votes'
+      }
+    });
+  }
+  
+  if (poll.pollExpiryTime && new Date() > new Date(poll.pollExpiryTime)) {
+    console.log(`[SECURITY] Vote blocked - Poll expired - pollId: ${pollId}, ip: ${ip}`);
+    return res.status(403).json({
+      success: false,
+      error: {
+        code: 'POLL_EXPIRED',
+        message: 'This poll has expired'
+      }
+    });
+  }
+  
   const validOption = poll.options.find(opt => opt.id === optionId);
   if (!validOption) {
     return res.status(400).json({

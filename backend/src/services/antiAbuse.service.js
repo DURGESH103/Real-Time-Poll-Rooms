@@ -18,6 +18,7 @@ class AntiAbuseService {
       const existingVote = await Vote.findOne({ pollId, fingerprint });
       
       if (existingVote) {
+        console.log(`[SECURITY] Vote blocked - Fingerprint duplicate - pollId: ${pollId}, fingerprint: ${fingerprint.substring(0, 8)}...`);
         logger.warn(`Duplicate vote attempt - Poll: ${pollId}, Fingerprint: ${fingerprint.substring(0, 8)}...`);
         return {
           allowed: false,
@@ -58,6 +59,7 @@ class AntiAbuseService {
       const maxVotesPerHour = parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 10;
 
       if (recentVotes >= maxVotesPerHour) {
+        console.log(`[SECURITY] Vote blocked - Global rate limit - ip: ${ip}, votes: ${recentVotes}`);
         logger.warn(`Global IP rate limit exceeded - IP: ${ip}, Votes: ${recentVotes}`);
         return {
           allowed: false,

@@ -3,39 +3,46 @@ import socketService from '../services/socket';
 
 export const useSocket = (pollId, onVoteUpdate) => {
   const [connected, setConnected] = useState(false);
+  const [reconnecting, setReconnecting] = useState(false);
 
   useEffect(() => {
     if (!pollId) return;
 
-    // Connect socket
     const socket = socketService.connect();
-
-    // Join poll room
     socketService.joinPoll(pollId);
 
-    // Listen for connection status
-    const handleConnect = () => setConnected(true);
-    const handleDisconnect = () => setConnected(false);
+    const handleConnect = () => {
+      setConnected(true);
+      setReconnecting(false);
+    };
+    
+    const handleDisconnect = () => {
+      setConnected(false);
+      setReconnecting(true);
+    };
+    
+    const handleReconnecting = () => {
+      setReconnecting(true);
+    };
 
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
+    socket.on('reconnecting', handleReconnecting);
 
-    // Set initial connection status
     setConnected(socket.connected);
 
-    // Listen for vote updates
     if (onVoteUpdate) {
       socketService.onVoteUpdate(onVoteUpdate);
     }
 
-    // Cleanup
     return () => {
       socketService.leavePoll(pollId);
       socketService.offVoteUpdate();
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
+      socket.off('reconnecting', handleReconnecting);
     };
   }, [pollId, onVoteUpdate]);
 
-  return { connected };
+  return { connected, reconnecting };
 };

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { BarChart3, Wifi, WifiOff, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Navbar from '../components/Navbar';
 import { usePoll } from '../hooks/usePoll';
 import { useSocket } from '../hooks/useSocket';
 import { voteAPI } from '../services/api';
@@ -11,6 +12,7 @@ import ResultsChart from '../components/ResultsChart';
 import ShareLink from '../components/ShareLink';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import VoteSuccessBanner from '../components/VoteSuccessBanner';
+import ReconnectBanner from '../components/ReconnectBanner';
 
 const PollRoom = () => {
   const { pollId } = useParams();
@@ -29,7 +31,7 @@ const PollRoom = () => {
   }, [updatePollResults]);
 
   // Socket connection
-  const { connected } = useSocket(pollId, handleVoteUpdate);
+  const { connected, reconnecting } = useSocket(pollId, handleVoteUpdate);
 
   // Get device fingerprint on mount
   useEffect(() => {
@@ -93,42 +95,52 @@ const PollRoom = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-            <LoadingSkeleton />
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+              <LoadingSkeleton />
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">😕</span>
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">😕</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Poll Not Found</h2>
+              <p className="text-gray-600 mb-6">{error}</p>
+              <button
+                onClick={() => navigate('/')}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all hover:scale-105"
+              >
+                Create Your Own Poll
+              </button>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Poll Not Found</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={() => navigate('/')}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all hover:scale-105"
-            >
-              Create Your Own Poll
-            </button>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   const shareUrl = `${window.location.origin}/poll/${pollId}`;
+  const isPollClosed = poll.isClosed || (poll.pollExpiryTime && new Date() > new Date(poll.pollExpiryTime));
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
+    <>
+      <Navbar />
+      <ReconnectBanner show={reconnecting} />
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
       {/* Back Button */}
       <div className="max-w-3xl mx-auto mb-4">
         <button
@@ -172,7 +184,20 @@ const PollRoom = () => {
           </div>
 
           {/* Voting or Results */}
-          {!hasVoted ? (
+          {isPollClosed ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🔒</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Poll Closed</h3>
+              <p className="text-gray-600 mb-6">This poll is no longer accepting votes</p>
+              <ResultsChart 
+                poll={poll} 
+                hasVoted={hasVoted} 
+                selectedOption={selectedOption} 
+              />
+            </div>
+          ) : !hasVoted ? (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Cast Your Vote</h2>
               
@@ -239,8 +264,9 @@ const PollRoom = () => {
             ← Back to Dashboard
           </button>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

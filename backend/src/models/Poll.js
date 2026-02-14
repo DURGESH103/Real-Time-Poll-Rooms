@@ -40,6 +40,14 @@ const pollSchema = new mongoose.Schema({
   expiresAt: {
     type: Date,
     default: null
+  },
+  pollExpiryTime: {
+    type: Date,
+    default: null
+  },
+  isClosed: {
+    type: Boolean,
+    default: false
   }
 });
 
