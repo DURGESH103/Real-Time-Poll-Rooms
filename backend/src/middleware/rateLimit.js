@@ -17,18 +17,17 @@ export const globalLimiter = rateLimit({
 
 // Vote rate limiter - strict limit on voting
 export const voteLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 3600000, // 1 hour
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 10, // 10 votes per hour
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 5, // 5 vote attempts per poll per 10 minutes
   message: {
     success: false,
     error: {
       code: 'VOTE_RATE_LIMIT_EXCEEDED',
-      message: 'Too many votes from this IP. Please try again later.'
+      message: 'Too many vote attempts. Please try again later.'
     }
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // Use IP as key
   keyGenerator: (req) => {
     return req.ip || req.connection.remoteAddress;
   }
