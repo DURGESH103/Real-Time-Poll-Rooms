@@ -6,9 +6,9 @@ import { asyncHandler } from '../middleware/errorHandler.js';
  * POST /api/polls
  */
 export const createPoll = asyncHandler(async (req, res) => {
-  const { question, options } = req.validatedData;
+  const { question, options, pollExpiryTime } = req.validatedData;
 
-  const poll = await pollService.createPoll(question, options);
+  const poll = await pollService.createPoll(question, options, pollExpiryTime);
 
   // Generate shareable URL
   const shareUrl = `${process.env.FRONTEND_URL}/poll/${poll.pollId}`;

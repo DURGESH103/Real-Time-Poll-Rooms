@@ -6,23 +6,29 @@ class PollService {
   /**
    * Create new poll
    */
-  async createPoll(question, options) {
+  async createPoll(question, options, pollExpiryTime) {
     try {
-      // Generate unique poll ID
       const pollId = nanoid(9);
 
-      // Transform options array to schema format
       const formattedOptions = options.map((text, index) => ({
         id: index.toString(),
         text: text.trim(),
         votes: 0
       }));
+      
+      let expiryTime = pollExpiryTime;
+      if (!expiryTime) {
+        expiryTime = new Date();
+        expiryTime.setDate(expiryTime.getDate() + 7);
+      }
 
       const poll = new Poll({
         pollId,
         question: question.trim(),
         options: formattedOptions,
-        totalVotes: 0
+        totalVotes: 0,
+        pollExpiryTime: expiryTime,
+        isClosed: false
       });
 
       await poll.save();

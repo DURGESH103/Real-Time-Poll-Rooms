@@ -4,6 +4,7 @@ import { Plus, X } from 'lucide-react';
 const PollForm = ({ onSubmit, loading }) => {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState(['', '']);
+  const [expiryOption, setExpiryOption] = useState('1d');
   const [errors, setErrors] = useState({});
 
   const addOption = () => {
@@ -52,9 +53,19 @@ const PollForm = ({ onSubmit, loading }) => {
     if (!validate()) return;
 
     const filledOptions = options.filter(opt => opt.trim());
+    
+    const now = new Date();
+    let expiryTime = new Date();
+    
+    if (expiryOption === '1h') expiryTime.setHours(now.getHours() + 1);
+    if (expiryOption === '1d') expiryTime.setDate(now.getDate() + 1);
+    if (expiryOption === '7d') expiryTime.setDate(now.getDate() + 7);
+    if (expiryOption === '30d') expiryTime.setDate(now.getDate() + 30);
+    
     onSubmit({
       question: question.trim(),
-      options: filledOptions
+      options: filledOptions,
+      pollExpiryTime: expiryTime
     });
   };
 
@@ -123,6 +134,23 @@ const PollForm = ({ onSubmit, loading }) => {
             Add Option
           </button>
         )}
+      </div>
+
+      {/* Poll Duration */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Poll Duration
+        </label>
+        <select
+          value={expiryOption}
+          onChange={(e) => setExpiryOption(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+        >
+          <option value="1h">1 Hour</option>
+          <option value="1d">1 Day</option>
+          <option value="7d">7 Days</option>
+          <option value="30d">30 Days</option>
+        </select>
       </div>
 
       {/* Submit Button */}

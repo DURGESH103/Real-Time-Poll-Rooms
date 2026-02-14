@@ -37,7 +37,11 @@ export const createPollSchema = Joi.object({
       'array.min': 'Poll must have at least 2 options',
       'array.max': 'Poll cannot have more than 10 options',
       'any.required': 'Options are required'
-    })
+    }),
+  
+  pollExpiryTime: Joi.date()
+    .optional()
+    .allow(null)
 });
 
 // Vote submission validation schema
