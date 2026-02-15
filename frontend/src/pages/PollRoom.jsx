@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
+import LiveBadge from '../components/LiveBadge';
 import { usePoll } from '../hooks/usePoll';
 import { useSocket } from '../hooks/useSocket';
 import { voteAPI } from '../services/api';
@@ -163,21 +164,9 @@ const PollRoom = () => {
                 {poll.totalVotes} {poll.totalVotes === 1 ? 'vote' : 'votes'} • 
                 {hasVoted ? ' ✓ You voted' : ' Select an option to vote'}
               </p>
-              {poll.pollExpiryTime && (
-                <div className="flex items-center gap-2 text-sm mt-2">
-                  {timeLeft === 'Expired' ? (
-                    <>
-                      <span className="text-red-500">●</span>
-                      <span className="text-red-600 font-medium">Expired</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="animate-pulse text-green-500">●</span>
-                      <span className="text-gray-500">Ends in {timeLeft}</span>
-                    </>
-                  )}
-                </div>
-              )}
+              <div className="mt-2">
+                <LiveBadge poll={poll} />
+              </div>
             </div>
             
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${

@@ -1,48 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Users } from 'lucide-react';
+import LiveBadge from './LiveBadge';
 import ProgressBar from './ProgressBar';
-
-const getStatusBadge = (status) => {
-  const badges = {
-    LIVE: { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Live', dot: 'bg-emerald-500' },
-    ENDING_SOON: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Ending Soon', dot: 'bg-yellow-500' },
-    EXPIRED: { bg: 'bg-red-100', text: 'text-red-700', label: 'Expired', dot: 'bg-red-500' },
-    CLOSED: { bg: 'bg-gray-200', text: 'text-gray-600', label: 'Closed', dot: 'bg-gray-500' }
-  };
-  return badges[status] || badges.LIVE;
-};
-
-const getTimeText = (poll) => {
-  if (!poll.pollExpiryTime) return null;
-  
-  const now = new Date();
-  const expiry = new Date(poll.pollExpiryTime);
-  const diff = expiry - now;
-  
-  if (diff < 0) {
-    const hours = Math.abs(Math.floor(diff / (1000 * 60 * 60)));
-    if (hours < 24) return `Expired ${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    return `Expired ${days}d ago`;
-  }
-  
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  
-  if (hours < 1) return `Ends in ${minutes}m`;
-  if (hours < 24) return `Ends in ${hours}h ${minutes}m`;
-  return null;
-};
 
 const PollCard = ({ poll }) => {
   const navigate = useNavigate();
   
   const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes);
   const leader = sortedOptions[0];
-  const status = poll.status || 'LIVE';
-  const badge = getStatusBadge(status);
-  const timeText = getTimeText(poll);
-  const isClosed = status === 'EXPIRED' || status === 'CLOSED';
+  const isExpired = poll.pollExpiryTime && new Date() > new Date(poll.pollExpiryTime);
+  const isClosed = poll.isClosed || isExpired;
 
   return (
     <div
@@ -60,23 +27,12 @@ const PollCard = ({ poll }) => {
       </div>
 
       <div className="flex items-center gap-4 mb-5">
-        <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}`}>
-          <div className={`w-1.5 h-1.5 rounded-full ${badge.dot} ${status === 'LIVE' ? 'animate-pulse' : ''}`} />
-          {badge.label}
-        </div>
+        <LiveBadge poll={poll} />
         <div className="flex items-center gap-1.5 text-sm font-medium text-slate-600">
           <Users className="w-4 h-4" />
           <span>{poll.totalVotes} votes</span>
         </div>
       </div>
-
-      {timeText && (
-        <div className="text-xs text-slate-500 mb-3">{timeText}</div>
-      )}
-
-      {isClosed && (
-        <div className="text-xs font-medium text-slate-500 mb-3">Voting closed</div>
-      )}
 
       <div className="space-y-3 mb-4">
         {sortedOptions.slice(0, 2).map((option, idx) => {
@@ -90,7 +46,6 @@ const PollCard = ({ poll }) => {
               option={option}
               percentage={percentage}
               isLeading={idx === 0 && poll.totalVotes > 0}
-              muted={isClosed}
             />
           );
         })}
