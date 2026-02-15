@@ -16,7 +16,7 @@ const app = express();
 const server = createServer(app);
 
 // Initialize Socket.io
-const io = initializeSocket(server);
+const io = initializeSocket(server, allowedOrigins);
 
 // Make io accessible in routes
 app.set('io', io);
@@ -28,10 +28,32 @@ app.set('trust proxy', 1);
 app.use(helmet());
 
 // CORS configuration
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  process.env.FRONTEND_URL,
+  process.env.PRODUCTION_URL
+].filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Body parser
 app.use(express.json({ limit: '10kb' }));

@@ -1,10 +1,22 @@
 import { Server } from 'socket.io';
 import logger from '../utils/logger.js';
 
-export const initializeSocket = (server) => {
+export const initializeSocket = (server, allowedOrigins = []) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        
+        if (origin.endsWith('.vercel.app')) {
+          return callback(null, true);
+        }
+        
+        callback(new Error('Not allowed by CORS'));
+      },
       methods: ['GET', 'POST'],
       credentials: true
     },
