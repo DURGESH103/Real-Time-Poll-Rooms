@@ -1,15 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Zap, Shield, ArrowRight, BarChart3 } from 'lucide-react';
-import Navbar from '../components/Navbar';
 import GlassCard from '../components/GlassCard';
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -190,6 +187,5 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </>
   );
 }

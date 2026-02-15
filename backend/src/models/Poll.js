@@ -51,6 +51,30 @@ const pollSchema = new mongoose.Schema({
   }
 });
 
+pollSchema.methods.getStatus = function() {
+  if (this.isClosed) {
+    return 'CLOSED';
+  }
+  
+  if (this.pollExpiryTime) {
+    const now = new Date();
+    const expiry = new Date(this.pollExpiryTime);
+    
+    if (now > expiry) {
+      return 'EXPIRED';
+    }
+    
+    const timeLeft = expiry - now;
+    const oneHour = 60 * 60 * 1000;
+    
+    if (timeLeft < oneHour) {
+      return 'ENDING_SOON';
+    }
+  }
+  
+  return 'LIVE';
+};
+
 // TTL Index - auto-delete polls after configured days
 pollSchema.index(
   { createdAt: 1 }, 

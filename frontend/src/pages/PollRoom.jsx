@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { BarChart3, Wifi, WifiOff, ArrowLeft } from 'lucide-react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Navbar from '../components/Navbar';
 import { usePoll } from '../hooks/usePoll';
 import { useSocket } from '../hooks/useSocket';
 import { voteAPI } from '../services/api';
@@ -17,6 +16,8 @@ import ReconnectBanner from '../components/ReconnectBanner';
 const PollRoom = () => {
   const { pollId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isEmbed = searchParams.get('mode') === 'embed';
   const { poll, loading, error, updatePollResults } = usePoll(pollId);
   
   const [selectedOption, setSelectedOption] = useState(null);
@@ -25,16 +26,13 @@ const PollRoom = () => {
   const [fingerprint, setFingerprint] = useState(null);
   const [timeLeft, setTimeLeft] = useState('');
 
-  // Real-time updates handler
   const handleVoteUpdate = useCallback((data) => {
     updatePollResults(data);
     toast.success('New vote received!', { icon: '📊' });
   }, [updatePollResults]);
 
-  // Socket connection
   const { connected, reconnecting, socket } = useSocket(pollId, handleVoteUpdate);
 
-  // Countdown timer
   useEffect(() => {
     if (!poll?.pollExpiryTime) return;
 
@@ -62,7 +60,6 @@ const PollRoom = () => {
     return () => clearInterval(interval);
   }, [poll, pollId, socket]);
 
-  // Get device fingerprint on mount
   useEffect(() => {
     const initFingerprint = async () => {
       const fp = await getDeviceFingerprint();
@@ -71,7 +68,6 @@ const PollRoom = () => {
     initFingerprint();
   }, []);
 
-  // Check if user has already voted
   useEffect(() => {
     const checkVoteStatus = async () => {
       if (!fingerprint || !pollId) return;
@@ -124,41 +120,31 @@ const PollRoom = () => {
 
   if (loading) {
     return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-              <LoadingSkeleton />
-            </div>
-          </div>
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+          <LoadingSkeleton />
         </div>
-      </>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">😕</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Poll Not Found</h2>
-              <p className="text-gray-600 mb-6">{error}</p>
-              <button
-                onClick={() => navigate('/')}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all hover:scale-105"
-              >
-                Create Your Own Poll
-              </button>
-            </div>
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">😕</span>
           </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Poll Not Found</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all hover:scale-105"
+          >
+            Create Your Own Poll
+          </button>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -167,22 +153,8 @@ const PollRoom = () => {
 
   return (
     <>
-      <Navbar />
       <ReconnectBanner show={reconnecting} />
-      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:py-12">
-      {/* Back Button */}
-      <div className="max-w-3xl mx-auto mb-4">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to Dashboard</span>
-        </button>
-      </div>
-
       <div className="max-w-3xl mx-auto space-y-6">
-        {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
@@ -208,7 +180,6 @@ const PollRoom = () => {
               )}
             </div>
             
-            {/* Connection Status */}
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
               connected ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
             }`}>
@@ -227,7 +198,6 @@ const PollRoom = () => {
             </div>
           </div>
 
-          {/* Voting or Results */}
           {isPollClosed ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -259,7 +229,6 @@ const PollRoom = () => {
                 ))}
               </div>
 
-              {/* Desktop button */}
               <button
                 onClick={handleVote}
                 disabled={!selectedOption || voting || !fingerprint}
@@ -268,7 +237,6 @@ const PollRoom = () => {
                 {voting ? 'Submitting Vote...' : !fingerprint ? 'Loading...' : 'Submit Vote'}
               </button>
               
-              {/* Mobile sticky button */}
               <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg z-50">
                 <button
                   onClick={handleVote}
@@ -279,7 +247,6 @@ const PollRoom = () => {
                 </button>
               </div>
               
-              {/* Spacer for mobile sticky button */}
               <div className="h-20 sm:hidden" />
             </div>
           ) : (
@@ -296,19 +263,7 @@ const PollRoom = () => {
           )}
         </div>
 
-        {/* Share Section */}
-        <ShareLink url={shareUrl} />
-
-        {/* Actions */}
-        <div className="text-center">
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-          >
-            ← Back to Dashboard
-          </button>
-        </div>
-        </div>
+        {!isEmbed && <ShareLink url={shareUrl} />}
       </div>
     </>
   );

@@ -34,7 +34,7 @@ const Dashboard = () => {
   };
 
   const totalPolls = polls.length;
-  const activePolls = polls.filter(p => !p.isClosed && (!p.pollExpiryTime || new Date(p.pollExpiryTime) > new Date())).length;
+  const activePolls = polls.filter(p => p.status === 'LIVE' || p.status === 'ENDING_SOON').length;
   const totalVotes = polls.reduce((sum, p) => sum + (p.totalVotes || 0), 0);
 
   if (loading) {

@@ -47,7 +47,7 @@ class PollService {
    */
   async getPollById(pollId) {
     try {
-      const poll = await Poll.findOne({ pollId }).lean();
+      const poll = await Poll.findOne({ pollId });
       
       if (!poll) {
         const error = new Error('Poll not found');
@@ -56,7 +56,17 @@ class PollService {
         throw error;
       }
 
-      return poll;
+      const status = poll.getStatus();
+      
+      if (status === 'EXPIRED' && !poll.isClosed) {
+        poll.isClosed = true;
+        await poll.save();
+      }
+
+      const pollData = poll.toObject();
+      pollData.status = status;
+      
+      return pollData;
     } catch (error) {
       if (!error.statusCode) {
         logger.error('Error fetching poll:', error);
@@ -85,7 +95,7 @@ class PollService {
           new: true,
           runValidators: true 
         }
-      ).lean();
+      );
 
       if (!result) {
         const error = new Error('Poll or option not found');
@@ -94,9 +104,13 @@ class PollService {
         throw error;
       }
 
+      const status = result.getStatus();
+      const pollData = result.toObject();
+      pollData.status = status;
+
       logger.info(`Vote recorded - Poll: ${pollId}, Option: ${optionId}`);
       
-      return result;
+      return pollData;
     } catch (error) {
       logger.error('Error incrementing vote:', error);
       throw error;

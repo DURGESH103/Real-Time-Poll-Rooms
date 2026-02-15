@@ -2,6 +2,8 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
+import MainLayout from './layouts/MainLayout';
+import PublicPollLayout from './layouts/PublicPollLayout';
 
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -46,10 +48,16 @@ function App() {
       />
           
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create" element={<CreatePoll />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/poll/:pollId" element={<PollRoom />} />
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/create" element={<CreatePoll />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+            
+            <Route element={<PublicPollLayout />}>
+              <Route path="/poll/:pollId" element={<PollRoom />} />
+            </Route>
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
