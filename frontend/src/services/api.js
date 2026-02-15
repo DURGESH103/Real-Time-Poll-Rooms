@@ -48,6 +48,7 @@ api.interceptors.response.use(
 
 // API methods
 export const pollAPI = {
+  getAll: () => api.get('/polls'), 
   create: (data) => api.post('/polls', data),
   getById: (pollId) => api.get(`/polls/${pollId}`),
   getResults: (pollId) => api.get(`/polls/${pollId}/results`)
