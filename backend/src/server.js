@@ -16,7 +16,7 @@ const app = express();
 const server = createServer(app);
 
 /* ======================================================
-   ✅ DEFINE ALLOWED ORIGINS FIRST (VERY IMPORTANT)
+    DEFINE ALLOWED ORIGINS FIRST (VERY IMPORTANT)
 ====================================================== */
 
 const allowedOrigins = [
@@ -28,7 +28,7 @@ const allowedOrigins = [
 ].filter(Boolean);
 
 /* ======================================================
-   ✅ CORS CONFIGURATION (MULTI DOMAIN + VERCEL SAFE)
+    CORS CONFIGURATION (MULTI DOMAIN + VERCEL SAFE)
 ====================================================== */
 
 const corsOptions = {
@@ -56,14 +56,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 /* ======================================================
-   ✅ SOCKET INIT AFTER ALLOWED ORIGINS EXISTS
+    SOCKET INIT AFTER ALLOWED ORIGINS EXISTS
 ====================================================== */
 
 const io = initializeSocket(server, allowedOrigins);
 app.set('io', io);
 
 /* ======================================================
-   ✅ SECURITY + MIDDLEWARE
+    SECURITY + MIDDLEWARE
 ====================================================== */
 
 app.set('trust proxy', 1);
@@ -73,7 +73,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(globalLimiter);
 
 /* ======================================================
-   ✅ HEALTH CHECK
+    HEALTH CHECK
 ====================================================== */
 
 app.get('/health', (req, res) => {
@@ -85,21 +85,21 @@ app.get('/health', (req, res) => {
 });
 
 /* ======================================================
-   ✅ ROUTES
+    ROUTES
 ====================================================== */
 
 app.use('/api/polls', pollRoutes);
 app.use('/api/vote', voteRoutes);
 
 /* ======================================================
-   ✅ ERROR HANDLING
+    ERROR HANDLING
 ====================================================== */
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
 /* ======================================================
-   ✅ START SERVER
+    START SERVER
 ====================================================== */
 
 const PORT = process.env.PORT || 5000;
@@ -121,7 +121,7 @@ const startServer = async () => {
 };
 
 /* ======================================================
-   ✅ PROCESS SAFETY
+    PROCESS SAFETY
 ====================================================== */
 
 process.on('unhandledRejection', (err) => {

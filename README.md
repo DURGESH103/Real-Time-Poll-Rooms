@@ -9,6 +9,10 @@ A production-ready real-time polling application built with React, Node.js, Sock
 
 ---
 
+==================
+URL = https://real-time-poll-rooms-beta.vercel.app
+==================
+
 ## ✨ Features
 
 ### Core Features
@@ -344,6 +348,16 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for step-by-step deployment guide.
 - [ ] White-label solution
 
 ---
+Why Socket.io:
+Chosen for real-time event push instead of polling to reduce latency and server load.
+
+Why MongoDB:
+Flexible schema for poll options, fast atomic updates using $inc.
+
+Why Fingerprint + IP:
+Combines device + network level control for stronger abuse prevention.
+
+-------
 
 ## 🤝 Contributing
 
@@ -409,15 +423,15 @@ For issues or questions:
 1. Check [TESTING.md](TESTING.md) for troubleshooting
 2. Review [DEPLOYMENT.md](DEPLOYMENT.md) for deployment issues
 3. Open an issue on GitHub
-4. Contact: [your-email@example.com]
+4. Contact: [dkumar11dec2003@gmail.com](mailto:dkumar11dec2003@gmail.com)
 
 ---
 
 ## 🎉 Demo
 
-**Live Demo**: [https://your-app.vercel.app](https://your-app.vercel.app)
+**Live Demo**: [https://real-time-poll-rooms-beta.vercel.app/](https://real-time-poll-rooms-beta.vercel.app/)
 
-**Test Poll**: [https://your-app.vercel.app/poll/demo123](https://your-app.vercel.app/poll/demo123)
+**Test Poll**: [https://real-time-poll-rooms-beta.vercel.app/dashboard](https://real-time-poll-rooms-beta.vercel.app/dashboard)
 
 ---
 
