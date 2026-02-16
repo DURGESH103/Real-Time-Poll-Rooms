@@ -1,7 +1,12 @@
 import { Flame, Activity } from 'lucide-react';
 
-const ActivityBadge = ({ isActive, connected }) => {
+const ActivityBadge = ({ isActive, connected, poll }) => {
+  // Don't show if not connected
   if (!connected) return null;
+  
+  // Don't show if poll is closed or expired
+  const isPollClosed = poll?.isClosed || (poll?.pollExpiryTime && new Date() > new Date(poll.pollExpiryTime));
+  if (isPollClosed) return null;
 
   return (
     <div className={`

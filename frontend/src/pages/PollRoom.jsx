@@ -197,7 +197,7 @@ const PollRoom = () => {
               </p>
               <div className="mt-2 flex items-center gap-2 flex-wrap">
                 <LiveBadge poll={poll} />
-                <ActivityBadge isActive={isActive} connected={connected} />
+                <ActivityBadge isActive={isActive} connected={connected} poll={poll} />
               </div>
             </div>
             
