@@ -44,5 +44,5 @@ export const useSocket = (pollId, onVoteUpdate) => {
     };
   }, [pollId, onVoteUpdate]);
 
-  return { connected, reconnecting };
+  return { connected, reconnecting, socket: socketService.socket };
 };

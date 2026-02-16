@@ -6,7 +6,7 @@ const ResultsChart = ({ poll, hasVoted, selectedOption }) => {
   const winner = sortedOptions[0];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-up">
       {/* Stats Header */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
@@ -40,15 +40,20 @@ const ResultsChart = ({ poll, hasVoted, selectedOption }) => {
 
       {/* Results */}
       <div className="space-y-3">
-        {poll.options.map((option) => (
-          <VoteOption
+        {poll.options.map((option, index) => (
+          <div 
             key={option.id}
-            option={option}
-            totalVotes={poll.totalVotes}
-            selected={hasVoted && selectedOption === option.id}
-            disabled={true}
-            showResults={true}
-          />
+            style={{ animationDelay: `${index * 100}ms` }}
+            className="animate-slide-up"
+          >
+            <VoteOption
+              option={option}
+              totalVotes={poll.totalVotes}
+              selected={hasVoted && selectedOption === option.id}
+              disabled={true}
+              showResults={true}
+            />
+          </div>
         ))}
       </div>
 

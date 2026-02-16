@@ -3,8 +3,10 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import LiveBadge from '../components/LiveBadge';
+import ActivityBadge from '../components/ActivityBadge';
 import { usePoll } from '../hooks/usePoll';
 import { useSocket } from '../hooks/useSocket';
+import { useActivityIndicator } from '../hooks/useActivityIndicator';
 import { voteAPI } from '../services/api';
 import { getDeviceFingerprint } from '../utils/fingerprint';
 import VoteOption from '../components/VoteOption';
@@ -29,10 +31,21 @@ const PollRoom = () => {
 
   const handleVoteUpdate = useCallback((data) => {
     updatePollResults(data);
-    toast.success('New vote received!', { icon: '📊' });
+    toast('📊 New vote received', { 
+      icon: '🔥',
+      duration: 2000,
+      style: {
+        background: '#f3f4f6',
+        color: '#374151',
+        fontSize: '14px',
+        padding: '12px 16px',
+        borderRadius: '10px',
+      }
+    });
   }, [updatePollResults]);
 
   const { connected, reconnecting, socket } = useSocket(pollId, handleVoteUpdate);
+  const { isActive } = useActivityIndicator(connected, poll);
 
   useEffect(() => {
     if (!poll?.pollExpiryTime) return;
@@ -105,7 +118,25 @@ const PollRoom = () => {
       });
 
       setHasVoted(true);
-      toast.success('Vote recorded successfully!');
+      
+      const selectedOptionText = poll.options.find(o => o.id === selectedOption)?.text;
+      toast.success(
+        `✅ Vote recorded for "${selectedOptionText}"`,
+        { 
+          duration: 4000,
+          style: {
+            background: '#10b981',
+            color: '#fff',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '12px',
+          },
+          iconTheme: {
+            primary: '#fff',
+            secondary: '#10b981',
+          },
+        }
+      );
     } catch (err) {
       console.error('Vote error:', err);
       if (err.code === 'ALREADY_VOTED') {
@@ -164,8 +195,9 @@ const PollRoom = () => {
                 {poll.totalVotes} {poll.totalVotes === 1 ? 'vote' : 'votes'} • 
                 {hasVoted ? ' ✓ You voted' : ' Select an option to vote'}
               </p>
-              <div className="mt-2">
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
                 <LiveBadge poll={poll} />
+                <ActivityBadge isActive={isActive} connected={connected} />
               </div>
             </div>
             
@@ -221,18 +253,34 @@ const PollRoom = () => {
               <button
                 onClick={handleVote}
                 disabled={!selectedOption || voting || !fingerprint}
-                className="hidden sm:block w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-xl transition-all hover:scale-105 active:scale-95"
+                className="hidden sm:block w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 disabled:hover:scale-100 disabled:hover:shadow-none"
               >
-                {voting ? 'Submitting Vote...' : !fingerprint ? 'Loading...' : 'Submit Vote'}
+                {voting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Submitting Vote...
+                  </span>
+                ) : !fingerprint ? 'Loading...' : 'Submit Vote'}
               </button>
               
               <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg z-50">
                 <button
                   onClick={handleVote}
                   disabled={!selectedOption || voting || !fingerprint}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-xl transition-all text-lg"
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-xl transition-all duration-300 text-lg active:scale-95"
                 >
-                  {voting ? 'Submitting...' : !fingerprint ? 'Loading...' : 'Submit Vote'}
+                  {voting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Submitting...
+                    </span>
+                  ) : !fingerprint ? 'Loading...' : 'Submit Vote'}
                 </button>
               </div>
               
