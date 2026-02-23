@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, Plus, Activity, CheckCircle2, TrendingUp } from 'lucide-react';
-import axios from 'axios';
+import { BarChart3, Plus, Activity, TrendingUp } from 'lucide-react';
+import { pollAPI } from '../services/api';
 import PollCard from '../components/PollCard';
 import StatsCard from '../components/StatsCard';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,13 +19,11 @@ const Dashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${API_URL}/api/polls`);
-      console.log('✅ API Response:', response.data);
-      console.log('✅ Polls count:', response.data.data?.length);
-      setPolls(response.data.data || []);
+      const response = await pollAPI.getAll();
+      setPolls(response.data || []);
     } catch (err) {
       console.error('❌ Error fetching polls:', err);
-      setError(err.response?.data?.error?.message || 'Failed to load polls');
+      setError(err.message || 'Failed to load polls');
     } finally {
       setLoading(false);
     }
