@@ -16,14 +16,17 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${API_URL}/api/auth/me`, {
-        withCredentials: true
+        withCredentials: true,
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (response.data.success) {
         setUser(response.data.user);
       }
     } catch (error) {
       setUser(null);
+      localStorage.removeItem('token');
     } finally {
       setLoading(false);
     }
@@ -37,6 +40,9 @@ export const AuthProvider = ({ children }) => {
     );
     if (response.data.success) {
       setUser(response.data.user);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+      }
     }
     return response.data;
   };
@@ -49,6 +55,9 @@ export const AuthProvider = ({ children }) => {
     );
     if (response.data.success) {
       setUser(response.data.user);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+      }
     }
     return response.data;
   };
@@ -56,6 +65,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
     setUser(null);
+    localStorage.removeItem('token');
   };
 
   return (
