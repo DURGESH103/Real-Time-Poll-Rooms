@@ -4,7 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json'
   },
@@ -25,36 +25,73 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor with auto-retry
 api.interceptors.response.use(
   (response) => {
     return response.data;
   },
-  (error) => {
-    const errorResponse = {
-      message: 'An unexpected error occurred',
-      code: 'UNKNOWN_ERROR'
-    };
+  async (error) => {
+    const originalRequest = error.config;
 
-    if (error.response) {
-      // Server responded with error
-      errorResponse.message = error.response.data?.error?.message || errorResponse.message;
-      errorResponse.code = error.response.data?.error?.code || errorResponse.code;
-      errorResponse.status = error.response.status;
-    } else if (error.request) {
-      // Request made but no response
-      errorResponse.message = 'Network error. Please check your connection.';
-      errorResponse.code = 'NETWORK_ERROR';
+    // Auto-retry on network errors (max 2 retries)
+    if (!error.response && !originalRequest._retry) {
+      originalRequest._retry = true;
+      originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+      
+      if (originalRequest._retryCount < 2) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return api(originalRequest);
+      }
     }
+
+    // Handle 401 - redirect to login
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+    }
+
+    const errorResponse = {
+      message: error.response?.data?.message || 'Network error. Please try again.',
+      code: error.response?.data?.code || 'NETWORK_ERROR',
+      status: error.response?.status
+    };
 
     return Promise.reject(errorResponse);
   }
 );
 
-// API methods
+// API methods with caching
+const cache = new Map();
+const CACHE_TTL = 30000; // 30 seconds
+
+const getCached = (key) => {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  cache.delete(key);
+  return null;
+};
+
+const setCache = (key, data) => {
+  cache.set(key, { data, timestamp: Date.now() });
+};
+
 export const pollAPI = {
-  getAll: () => api.get('/polls'), 
-  create: (data) => api.post('/polls', data),
+  getAll: async () => {
+    const cached = getCached('polls');
+    if (cached) return cached;
+    const data = await api.get('/polls');
+    setCache('polls', data);
+    return data;
+  },
+  create: async (data) => {
+    const result = await api.post('/polls', data);
+    cache.delete('polls'); // Invalidate cache
+    return result;
+  },
   getById: (pollId) => api.get(`/polls/${pollId}`),
   getResults: (pollId) => api.get(`/polls/${pollId}/results`)
 };

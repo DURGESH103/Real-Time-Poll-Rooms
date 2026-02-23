@@ -3,20 +3,29 @@ import logger from '../utils/logger.js';
 
 class DashboardService {
   /**
-   * Get all polls with summary data
+   * Get all polls with summary data (optimized)
    */
-  async getAllPolls(limit = 50) {
+  async getAllPolls(limit = 100) {
     try {
+      // Optimized query with lean() for faster reads
       const polls = await Poll.find()
+        .select('pollId question totalVotes options createdAt pollExpiryTime isClosed')
         .sort({ createdAt: -1 })
-        .limit(limit);
+        .limit(limit)
+        .lean();
 
-      const pollsWithStatus = await Promise.all(polls.map(async (poll) => {
-        const status = poll.getStatus();
+      const now = Date.now();
+      const pollsWithStatus = polls.map((poll) => {
+        // Calculate status inline without model method
+        const timeLeft = poll.pollExpiryTime - now;
+        let status = 'LIVE';
         
-        if (status === 'EXPIRED' && !poll.isClosed) {
-          poll.isClosed = true;
-          await poll.save();
+        if (poll.isClosed) {
+          status = 'CLOSED';
+        } else if (timeLeft <= 0) {
+          status = 'EXPIRED';
+        } else if (timeLeft <= 3600000) {
+          status = 'ENDING_SOON';
         }
 
         return {
@@ -33,8 +42,9 @@ class DashboardService {
           isClosed: poll.isClosed,
           status
         };
-      }));
+      });
 
+      // Sort by status priority
       const statusOrder = { LIVE: 0, ENDING_SOON: 1, EXPIRED: 2, CLOSED: 3 };
       pollsWithStatus.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
 

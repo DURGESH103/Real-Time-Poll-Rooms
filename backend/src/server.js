@@ -3,6 +3,7 @@ import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/database.js';
 import { initializeSocket } from './config/socket.js';
@@ -71,6 +72,7 @@ app.set('io', io);
 
 app.set('trust proxy', 1);
 app.use(helmet());
+app.use(compression()); // Compress responses for faster transfer
 app.use(cookieParser());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
