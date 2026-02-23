@@ -7,13 +7,8 @@ import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(protect);
-
-// Submit vote
-router.post('/', voteLimiter, validate(voteSchema), ipRateLimitPerPoll, submitVote);
-
-// Check vote status
-router.post('/check', checkVoteStatus);
+// Protected routes
+router.post('/', protect, voteLimiter, validate(voteSchema), ipRateLimitPerPoll, submitVote);
+router.post('/check', protect, checkVoteStatus);
 
 export default router;

@@ -7,19 +7,12 @@ import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// All routes require authentication
-router.use(protect);
-
-// Get all polls (dashboard)
-router.get('/', getAllPolls);
-
-// Create poll
-router.post('/', pollCreationLimiter, validate(createPollSchema), createPoll);
-
-// Get poll by ID
+// Public routes (no auth required)
 router.get('/:pollId', getPoll);
-
-// Get poll results
 router.get('/:pollId/results', getPollResults);
+
+// Protected routes (auth required)
+router.get('/', protect, getAllPolls);
+router.post('/', protect, pollCreationLimiter, validate(createPollSchema), createPoll);
 
 export default router;
