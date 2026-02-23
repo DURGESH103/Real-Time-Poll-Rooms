@@ -2,6 +2,160 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Shimmer animation for progress bars */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* Blob animation */
+  @keyframes blob {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(20px, -50px) scale(1.1); }
+    50% { transform: translate(-20px, 20px) scale(0.9); }
+    75% { transform: translate(50px, 50px) scale(1.05); }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  /* Smooth fade-in animations */
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-in-from-bottom-4 {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-from-bottom-6 {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-from-bottom-8 {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes zoom-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-in {
+    animation-fill-mode: both;
+  }
+
+  .fade-in {
+    animation-name: fade-in;
+  }
+
+  .slide-in-from-bottom-4 {
+    animation-name: slide-in-from-bottom-4;
+  }
+
+  .slide-in-from-bottom-6 {
+    animation-name: slide-in-from-bottom-6;
+  }
+
+  .slide-in-from-bottom-8 {
+    animation-name: slide-in-from-bottom-8;
+  }
+
+  .zoom-in {
+    animation-name: zoom-in;
+  }
+
+  .duration-200 {
+    animation-duration: 200ms;
+  }
+
+  .duration-500 {
+    animation-duration: 500ms;
+  }
+
+  .duration-700 {
+    animation-duration: 700ms;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #3b82f6, #6366f1);
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #2563eb, #4f46e5);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -1,89 +1,107 @@
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Zap, Shield, ArrowRight, BarChart3 } from 'lucide-react';
+import { Sparkles, Zap, Shield, ArrowRight, BarChart3, CheckCircle2 } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-200/50 rounded-full text-sm font-medium text-blue-700 mb-8">
-                <Sparkles className="w-4 h-4" />
-                Real-Time Polling Platform
-              </div>
-              
-              <h1 className="text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-                Create Polls.
-                <br />
-                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  Watch Live.
-                </span>
-              </h1>
-              
-              <p className="text-xl text-gray-600 mb-10 leading-relaxed">
-                Build engaging polls in seconds. Share instantly. See results update in real-time with WebSocket technology.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => navigate('/create')}
-                  className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold text-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  Create Free Poll
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="px-8 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-2xl font-semibold text-lg hover:bg-white hover:border-gray-300 hover:scale-105 transition-all duration-300"
-                >
-                  View Dashboard
-                </button>
-              </div>
-            </div>
-            
-            <div className="hidden lg:block">
-              <GlassCard className="p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">Live Poll</div>
-                    <div className="text-sm text-gray-500">Real-time results</div>
-                  </div>
-                  <div className="ml-auto flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-xs font-medium text-emerald-700">Live</span>
-                  </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+        {/* Hero Section */}
+        <div className="relative overflow-hidden">
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+            <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+          </div>
+
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-xl border-2 border-blue-200/50 rounded-full text-sm font-bold text-blue-700 mb-8 shadow-lg shadow-blue-500/20">
+                  <Sparkles className="w-4 h-4" />
+                  Real-Time Polling Platform
                 </div>
                 
-                <div className="space-y-4">
-                  {[{ label: 'Option A', value: 65 }, { label: 'Option B', value: 35 }].map((opt, i) => (
-                    <div key={i}>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">{opt.label}</span>
-                        <span className="text-sm font-bold text-gray-900">{opt.value}%</span>
+                <h1 className="text-6xl lg:text-7xl font-black text-slate-900 mb-6 leading-tight">
+                  Create Polls.
+                  <br />
+                  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    Watch Live.
+                  </span>
+                </h1>
+                
+                <p className="text-xl text-slate-600 font-medium mb-10 leading-relaxed">
+                  Build engaging polls in seconds. Share instantly. See results update in real-time with WebSocket technology.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={() => navigate('/create')}
+                    className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-black text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                  >
+                    Create Free Poll
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="px-10 py-5 bg-white/90 backdrop-blur-xl border-2 border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 rounded-2xl font-black text-lg hover:scale-105 transition-all duration-300 shadow-xl"
+                  >
+                    View Dashboard
+                  </button>
+                </div>
+              </div>
+              
+              <div className="hidden lg:block animate-in fade-in slide-in-from-bottom-8 duration-700 animation-delay-200">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur-3xl opacity-20" />
+                  <GlassCard className="relative p-8 shadow-2xl">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/40">
+                        <BarChart3 className="w-6 h-6 text-white" />
                       </div>
-                      <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-1000 ${
-                            i === 0 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' : 'bg-gradient-to-r from-blue-500 to-indigo-600'
-                          }`}
-                          style={{ width: `${opt.value}%` }}
-                        />
+                      <div>
+                        <div className="font-black text-slate-900">Live Poll</div>
+                        <div className="text-sm text-slate-500 font-semibold">Real-time results</div>
+                      </div>
+                      <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border-2 border-emerald-200 rounded-full">
+                        <div className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </div>
+                        <span className="text-xs font-black text-emerald-700">Live</span>
                       </div>
                     </div>
-                  ))}
+                    
+                    <div className="space-y-4">
+                      {[{ label: 'Option A', value: 65 }, { label: 'Option B', value: 35 }].map((opt, i) => (
+                        <div key={i}>
+                          <div className="flex justify-between mb-2">
+                            <span className="text-sm font-bold text-slate-700">{opt.label}</span>
+                            <span className="text-sm font-black text-slate-900 px-2 py-0.5 bg-slate-100 rounded-lg">{opt.value}%</span>
+                          </div>
+                          <div className="h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                            <div 
+                              className={`h-full rounded-full transition-all duration-1000 relative overflow-hidden ${
+                                i === 0 ? 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30' : 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/30'
+                              }`}
+                              style={{ width: `${opt.value}%` }}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-6 pt-6 border-t-2 border-slate-100 flex items-center justify-between">
+                      <span className="text-sm text-slate-600 font-semibold">156 votes</span>
+                      <span className="text-sm font-black text-emerald-600 px-3 py-1 bg-emerald-50 rounded-lg">Leading: Option A</span>
+                    </div>
+                  </GlassCard>
                 </div>
-                
-                <div className="mt-6 pt-6 border-t border-gray-200/50 flex items-center justify-between">
-                  <span className="text-sm text-gray-600">156 votes</span>
-                  <span className="text-sm font-medium text-emerald-600">Leading: Option A</span>
-                </div>
-              </GlassCard>
+              </div>
             </div>
           </div>
         </div>
