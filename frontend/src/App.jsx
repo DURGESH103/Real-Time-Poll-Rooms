@@ -15,11 +15,15 @@ const PollRoom = lazy(() => import('./pages/PollRoom'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const Profile = lazy(() => import('./pages/Profile'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const PageLoader = () => (
-  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+    <div className="relative">
+      <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-indigo-600 rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '1s'}}></div>
+    </div>
   </div>
 );
 
@@ -34,8 +38,11 @@ function App() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#363636',
+            background: '#1e293b',
             color: '#fff',
+            borderRadius: '12px',
+            padding: '16px',
+            fontWeight: '600',
           },
           success: {
             duration: 3000,
@@ -69,6 +76,11 @@ function App() {
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } />
             </Route>
