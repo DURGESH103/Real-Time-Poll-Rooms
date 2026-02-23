@@ -3,10 +3,13 @@ import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import connectDB from './config/database.js';
 import { initializeSocket } from './config/socket.js';
 import { globalLimiter } from './middleware/rateLimit.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import authRoutes from './routes/auth.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import pollRoutes from './routes/poll.routes.js';
 import voteRoutes from './routes/vote.routes.js';
 import logger from './utils/logger.js';
@@ -68,6 +71,7 @@ app.set('io', io);
 
 app.set('trust proxy', 1);
 app.use(helmet());
+app.use(cookieParser());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(globalLimiter);
@@ -88,6 +92,8 @@ app.get('/health', (req, res) => {
     ROUTES
 ====================================================== */
 
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/polls', pollRoutes);
 app.use('/api/vote', voteRoutes);
 

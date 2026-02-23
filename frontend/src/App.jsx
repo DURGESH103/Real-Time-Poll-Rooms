@@ -4,11 +4,17 @@ import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import MainLayout from './layouts/MainLayout';
 import PublicPollLayout from './layouts/PublicPollLayout';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const CreatePoll = lazy(() => import('./pages/CreatePoll'));
 const PollRoom = lazy(() => import('./pages/PollRoom'));
+const Admin = lazy(() => import('./pages/Admin'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const PageLoader = () => (
@@ -20,8 +26,9 @@ const PageLoader = () => (
 function App() {
   return (
     <BrowserRouter>
-      <ErrorBoundary>
-        <Suspense fallback={<PageLoader />}>
+      <AuthProvider>
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
           <Toaster 
         position="top-right"
         toastOptions={{
@@ -49,19 +56,44 @@ function App() {
           
           <Routes>
             <Route element={<MainLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/create" element={<CreatePoll />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              } />
+              <Route path="/create" element={
+                <ProtectedRoute>
+                  <CreatePoll />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
             </Route>
             
             <Route element={<PublicPollLayout />}>
-              <Route path="/poll/:pollId" element={<PollRoom />} />
+              <Route path="/poll/:pollId" element={
+                <ProtectedRoute>
+                  <PollRoom />
+                </ProtectedRoute>
+              } />
             </Route>
             
+            <Route path="/admin" element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            } />
+            
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </ErrorBoundary>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
